@@ -1,9 +1,12 @@
 import {Hyperliquid, Tif} from "hyperliquid";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Initialize the SDK (replace with your actual private key and other necessary parameters)
 const tif: Tif = "Gtc";
 const coin = "PURR-SPOT";
-const private_key = "0x3524c94b436e946a58ab4fc3b582427f94190ce476a4b97eecc89cc007edee32";
+const private_key = process.env.PRIVATE_KEY || "0x";
 const user_address = "0xC4C654EBd6124ec719eDc71Aa1d4266e2389e0F0";
 const sdk = new Hyperliquid(private_key, false); // false for mainnet, true for testnet
 const buyRequests: any = [];
@@ -13,8 +16,8 @@ async function testExchangeAPI() {
     const orderRequest = {
       coin: coin,
       is_buy: true,
-      sz: 100,
-      limit_px: 0.3,
+      sz: 120,
+      limit_px: 0.095,
       order_type: { limit: { tif: tif } },
       reduce_only: false
     };
