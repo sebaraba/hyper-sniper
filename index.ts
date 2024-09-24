@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+//export PATH=$PATH:/opt/homebrew/bin
+
 // Transaction Configuration
 const tif: Tif = "Gtc";
 const coin = "PURR-SPOT";
