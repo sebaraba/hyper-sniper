@@ -9,7 +9,7 @@ dotenv.config();
 const tif: Tif = "Gtc";
 const coin = "PURR-SPOT";
 const quantity = 120;
-const nrOfRequests = 3;
+const nrOfRequests = 1;
 const startingPrice = 0.095;
 const priceIncrement = 0.01;
 
@@ -49,7 +49,10 @@ async function testExchangeAPI() {
     // });
 
     // Run batch of transactions with timeout
-    await runBatchRequestsWithTimeout(coin, nrOfRequests, startingPrice, priceIncrement, quantity, 1000);
+    await runBatchRequestsWithTimeout(coin, nrOfRequests, startingPrice, quantity, priceIncrement,  1000);
+
+    // Run transactions with timeout
+    // await runRequestsWithTimeout(coin, startingPrice, quantity, priceIncrement, 500)
     console.log("Order placed successfully");
   } catch (error) {
     console.error("An error occurred:", error);
@@ -98,5 +101,28 @@ const runBatchRequestsWithTimeout = async (coin: string, nrOfRequests: number, s
     await new Promise(resolve => setTimeout(resolve, timeout));
   }
 }
+
+const runRequestsWithTimeout = async (coin: string, startingPrice: number, quantity: number, priceIncrement: number, timeout: number) => {
+  console.log("Testing ExchangeAPI endpoints:");
+  const i = 0
+  while(true) {
+    const orderRequest = {
+      coin: coin,
+      is_buy: true,
+      sz: quantity,
+      limit_px: startingPrice + (priceIncrement * i),
+      order_type: { limit: { tif: tif } },
+      reduce_only: false
+    };
+
+    console.log(`\nPlacing Order ${startingPrice + (priceIncrement * i)}: date: ${new Date().toISOString()}`);
+    const txResult = await sdk.exchange.placeOrder(orderRequest);
+
+    console.log(`Order ${startingPrice + (priceIncrement * i)} placed successfully:`, txResult);
+
+    await new Promise(resolve => setTimeout(resolve, timeout));
+  }
+}
+
 
 testExchangeAPI();
