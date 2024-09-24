@@ -1,7 +1,11 @@
 // sniper.ts
 import { Hyperliquid, Tif } from "hyperliquid";
+import dotenv from "dotenv";
 
-const private_key = "0x3524c94b436e946a58ab4fc3b582427f94190ce476a4b97eecc89cc007edee32";
+dotenv.config();
+
+
+const private_key = process.env.PRIVATE_KEY || "0x";
 const sdk = new Hyperliquid(private_key, false); // false for mainnet, true for testnet
 
 
@@ -28,7 +32,7 @@ async function sendBatchRequests() {
   for (let i = 0; i < 3; i++) {
     const orderRequest = {
       ...requestBody,
-      limit_px: requestBody.limit_px + (0.01 * i)
+      limit_px: requestBody.limit_px + (priceIncrement * i)
     };
 
     console.log(`\nPlacing Order ${i + 1}: date: ${new Date().toISOString()}`);
@@ -36,10 +40,8 @@ async function sendBatchRequests() {
   }
 
   try {
-    const responses = Promise.all(requests);
-    // responses.forEach((response, index) => {
-    //   console.log(`Response for Order ${index + 1}:`, response);
-    // });
+    Promise.all(requests);
+
   } catch (error) {
     console.error("An error occurred while placing orders:", error);
   }
