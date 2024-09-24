@@ -11,6 +11,7 @@ const coin = "PURR-SPOT";
 const quantity = 120;
 const nrOfRequests = 3;
 const startingPrice = 0.095;
+const priceIncrement = 0.01;
 
 // Wallet Configuration
 const private_key = process.env.PRIVATE_KEY || "0x";
@@ -36,7 +37,7 @@ async function testExchangeAPI() {
     // const result = await sdk.exchange.placeOrder(orderRequest);
 
     // Run batch of transactions
-    // const batchRequests = getBatchRequests(coin, nrOfRequests, startingPrice, quantity)
+    // const batchRequests = getBatchRequests(coin, nrOfRequests, startingPrice, priceIncrement, quantity)
     // await Promise.allSettled(batchRequests).then((results) => {
     //   results.forEach((result, i) => {
     //     if (result.status === "fulfilled") {
@@ -48,7 +49,7 @@ async function testExchangeAPI() {
     // });
 
     // Run batch of transactions with timeout
-    await runBatchRequestsWithTimeout(coin, nrOfRequests, startingPrice, quantity, 1000);
+    await runBatchRequestsWithTimeout(coin, nrOfRequests, startingPrice, priceIncrement, quantity, 1000);
     console.log("Order placed successfully");
   } catch (error) {
     console.error("An error occurred:", error);
@@ -57,7 +58,7 @@ async function testExchangeAPI() {
   }
 }
 
-const getBatchRequests = (coin: string, nrOfRequests: number, startingPrice: number, quantity: number): Promise<any>[] => {
+const getBatchRequests = (coin: string, nrOfRequests: number, startingPrice: number, priceIncrement: number, quantity: number): Promise<any>[] => {
 
   const buyRequests = [];
 
@@ -66,7 +67,7 @@ const getBatchRequests = (coin: string, nrOfRequests: number, startingPrice: num
       coin: coin,
       is_buy: true,
       sz: quantity,
-      limit_px: startingPrice + (0.01 * i),
+      limit_px: startingPrice + (priceIncrement * i),
       order_type: { limit: { tif: tif } },
       reduce_only: false
     };
@@ -78,11 +79,11 @@ const getBatchRequests = (coin: string, nrOfRequests: number, startingPrice: num
   return buyRequests;
 }
 
-const runBatchRequestsWithTimeout = async (coin: string, nrOfRequests: number, startingPrice: number, quantity: number, timeout: number) => {
+const runBatchRequestsWithTimeout = async (coin: string, nrOfRequests: number, startingPrice: number, quantity: number, priceIncrement: number, timeout: number) => {
   console.log("Testing ExchangeAPI endpoints:");
   while(true) {
     for (let i = 0; i < 3; i++) {
-      buyRequests.push(getBatchRequests(coin, nrOfRequests, startingPrice, quantity));
+      buyRequests.push(getBatchRequests(coin, nrOfRequests, startingPrice, priceIncrement, quantity));
     }
 
     Promise.allSettled(buyRequests).then((results) => {
